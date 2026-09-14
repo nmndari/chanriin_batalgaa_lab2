@@ -1,0 +1,122 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: script-slo.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 30 max VUs, 1m30s max duration (incl. graceful stop):
+              * default: 30 looping VUs for 1m0s (gracefulStop: 30s)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+running (1m00.0s), 30/30 VUs, 1372 complete and 0 interrupted iterations
+
+running (1m01.0s), 11/30 VUs, 1391 complete and 0 interrupted iterations
+default ↓ [ 100% ] 30 VUs  1m0s
+
+
+  █ THRESHOLDS 
+
+    http_req_duration
+    ✗ 'p(95)<50' p(95)=232.12ms
+
+    http_req_failed
+    ✓ 'rate<0.01' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 1402    22.888223/s
+    checks_succeeded...: 100.00% 1402 out of 1402
+    checks_failed......: 0.00%   0 out of 1402
+
+    ✓ status 200 байна
+
+    HTTP
+    http_req_duration..............: avg=143.93ms min=54.29ms med=154.72ms max=1.63s p(90)=229.62ms p(95)=232.12ms
+      { expected_response:true }...: avg=143.93ms min=54.29ms med=154.72ms max=1.63s p(90)=229.62ms p(95)=232.12ms
+    http_req_failed................: 0.00%  0 out of 2804
+    http_reqs......................: 2804   45.776445/s
+
+    EXECUTION
+    iteration_duration.............: avg=1.3s     min=1.27s   med=1.28s    max=2.69s p(90)=1.29s    p(95)=1.3s    
+    iterations.....................: 1402   22.888223/s
+    vus............................: 11     min=11        max=30
+    vus_max........................: 30     min=30        max=30
+
+    NETWORK
+    data_received..................: 5.4 MB 88 kB/s
+    data_sent......................: 231 kB 3.8 kB/s
+
+
+
+
+running (1m01.3s), 00/30 VUs, 1402 complete and 0 interrupted iterations
+default ✓ [ 100% ] 30 VUs  1m0s
+time="2026-09-14T17:15:40+08:00" level=error msg="thresholds on metrics 'http_req_duration' have been crossed"
+
+k6 exit code: 99
