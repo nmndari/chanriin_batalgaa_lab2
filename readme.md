@@ -39,6 +39,10 @@ Summary-гээс уншсан үзүүлэлтүүд:
 
 **BASELINE p95 = 230.98 ms** → SLO: 230.98 × 1.5 ≈ 346 → **p(95) < 350**
 
+**Baseline хэмжилт (5 VU):**
+
+![Baseline 5 VU](screenshots/run_05vu.png)
+
 ---
 
 ## Алхам 3 — Ачааллыг шатлан өсгөх
