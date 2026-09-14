@@ -9,6 +9,8 @@
 - **Үйлдлийн систем:** macOS
 - **Target:** `https://test.k6.io` (302-оор `quickpizza.grafana.com` руу чиглэдэг)
 
+Бүх тест зөвхөн зөвшөөрөгдсөн дадлагын сайт `test.k6.io` рүү хийгдсэн.
+
 ---
 
 ## Алхам 2 — Үндсэн тест (baseline)
@@ -61,3 +63,27 @@ k6 run --vus 100 --duration 1m script.js | tee results/run-100vu.txt
 
 ### stages хувилбар
 5 → 30 → 100 VU stages туршилтаар p95 233.81 ms, max 305.02 ms, throughput 47 req/s, алдаа 0.00% гарсан. Нийт p95 бага VU-ийн үеүүдэд “живдэг” тул VU бүрийн тусдаа туршилтын үр дүнг хүснэгтэд ашиглав.
+
+---
+
+## Алхам 4 — Threshold (SLO) кодоор шалгуулах
+
+Baseline p95 = 230.98 ms тул 1.5 дахин нөөц авч p(95) < 350 ms гэж SLO тогтоов. Энэ утга нь 100 VU дээр хэмжигдсэн p95 (243.88 ms)-аас дээш нөөцтэй ч хэт хол биш тул бодит доройтол үүсвэл threshold шууд унана. Алдааны SLO нь rate < 0.01 (1%). Зааврын p(95)<300-г хуулаагүй.
+
+script-slo.js-г 30 VU, 1 минутын нөхцөлөөр ажиллуулав.
+
+| | Команда | Threshold | Үр дүн | exit code |
+|---|---|---|---|---|
+| **PASS** | `k6 run script-slo.js` | `p(95)<350` | ✓ p(95) = 231.87 ms | **0** |
+| **FAIL** | `k6 run -e P95=50 script-slo.js` | `p(95)<50` | ✗ p(95) = 232.12 ms | **99** |
+
+Гаралт: [run-slo-pass.txt](results/run-slo-pass.txt) · [run-slo-fail.txt](results/run-slo-fail.txt)
+
+Хоёр туршилтад алдаа 0.00% байсан. FAIL нь зөвхөн latency threshold хангаагүйгээс үүссэн бөгөөд exit code 99-өөр CI quality gate ажиллаж build-ийг зогсоох боломжтой.
+
+### Скриптийн бүтэц
+- [script.js](script.js) — Алхам 2/3, `vus/duration`, stages **байхгүй**
+- [stages.js](stages.js) — Алхам 3-ын stages цикл (5→30→100→0)
+- [script-slo.js](script-slo.js) — Алхам 4, thresholds
+
+stages болон `vus/duration`-г нэг файлд хольвол stages давамгайлж `vus/duration` үл тоогдоно.
