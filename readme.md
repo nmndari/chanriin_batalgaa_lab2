@@ -11,6 +11,10 @@
 
 Бүх тест зөвхөн зөвшөөрөгдсөн дадлагын сайт `test.k6.io` рүү хийгдсэн.
 
+![k6 version](screenshots/k6_version.png)
+
+> Дэлгэцийн зургууд нь нэмэлт нотолгоо. README-гийн хүснэгтийн бүх тоо [results/](results/) доторх бүтэн текст гаралтаас авагдсан бөгөөд зургууд өөр цагт ажиллуулсан тул хэдэн ms зөрж болно.
+
 ---
 
 ## Алхам 2 — Үндсэн тест (baseline)
@@ -55,6 +59,10 @@ k6 run --vus 100 --duration 1m script.js | tee results/run-100vu.txt
 
 Гаралтууд: [run-05vu.txt](results/run-05vu.txt) · [run-30vu.txt](results/run-30vu.txt) · [run-100vu.txt](results/run-100vu.txt)
 
+**100 VU оргил ачаалал:**
+
+![100 VU](screenshots/run_100vu.png)
+
 **Throughput.** VU 20 дахин өсөхөд throughput 7.62 → 150.65 req/s болж, 19.8 дахин өссөн. Нэг VU-ийн бүтээмж ердөө 1.1% буурч, алдаа бүх түвшинд 0.00% байв.
 
 **Хаана муудаж эхэлсэн бэ?** p95 нь 230.98 → 243.88 ms (+5.6%) буюу бага өөрчлөгдсөн. Харин max latency 245 → 445 ms (+82%) өссөн тул 30 VU-аас хойш сүүл хэсгийн latency муудаж эхэлсэн гэж үзэж болно.
@@ -78,6 +86,14 @@ script-slo.js-г 30 VU, 1 минутын нөхцөлөөр ажиллуулав
 | **FAIL** | `k6 run -e P95=50 script-slo.js` | `p(95)<50` | ✗ p(95) = 232.12 ms | **99** |
 
 Гаралт: [run-slo-pass.txt](results/run-slo-pass.txt) · [run-slo-fail.txt](results/run-slo-fail.txt)
+
+**PASS** — `p(95)<350`, exit code 0:
+
+![SLO PASS](screenshots/slo_pass.png)
+
+**FAIL** — `p(95)<50`, exit code 99, CI quality gate build-ийг зогсооно:
+
+![SLO FAIL](screenshots/slo_fail.png)
 
 Хоёр туршилтад алдаа 0.00% байсан. FAIL нь зөвхөн latency threshold хангаагүйгээс үүссэн бөгөөд exit code 99-өөр CI quality gate ажиллаж build-ийг зогсоох боломжтой.
 
@@ -110,6 +126,10 @@ k6 run -e EP=/slow local-test.js | tee results/run-local-slow.txt
 | `/slow` (100 ms) | 103.05 ms | **106.17 ms** | 112.20 ms | **290.70 req/s** | 0.00% | ✓ PASS |
 
 Гаралт: [run-local-fast.txt](results/run-local-fast.txt) · [run-local-slow.txt](results/run-local-slow.txt)
+
+**Зүүн талд сервер, баруун талд `/slow` тест:**
+
+![Локал /slow](screenshots/local_slow.png)
 
 **Ялгаа.** 100 ms саатал нэмэхэд p95 141 дахин өсөж, throughput 221 дахин буурсан. Серверийн саатал нэмэгдэхэд latency өсч, throughput буурч байгаа нь хоёр хэмжүүр эсрэг чиглэлд хөдөлдгийг харуулна.
 
