@@ -1,0 +1,86 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: local-test.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 30 max VUs, 1m0s max duration (incl. graceful stop):
+              * default: 30 looping VUs for 30s (gracefulStop: 30s)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  █ THRESHOLDS 
+
+    http_req_duration
+    ✓ 'p(95)<150' p(95)=106.17ms
+
+    http_req_failed
+    ✓ 'rate<0.01' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 8730    290.704615/s
+    checks_succeeded...: 100.00% 8730 out of 8730
+    checks_failed......: 0.00%   0 out of 8730
+
+    ✓ status 200 байна
+
+    HTTP
+    http_req_duration..............: avg=103.05ms min=99.51ms med=102.85ms max=112.2ms  p(90)=105.3ms  p(95)=106.17ms
+      { expected_response:true }...: avg=103.05ms min=99.51ms med=102.85ms max=112.2ms  p(90)=105.3ms  p(95)=106.17ms
+    http_req_failed................: 0.00%  0 out of 8730
+    http_reqs......................: 8730   290.704615/s
+
+    EXECUTION
+    iteration_duration.............: avg=103.17ms min=99.56ms med=102.98ms max=112.41ms p(90)=105.39ms p(95)=106.3ms 
+    iterations.....................: 8730   290.704615/s
+    vus............................: 30     min=30        max=30
+    vus_max........................: 30     min=30        max=30
+
+    NETWORK
+    data_received..................: 1.6 MB 55 kB/s
+    data_sent......................: 646 kB 22 kB/s
+
+
+
+
+default ✓ [ 100% ] 30 VUs  30s
+
+k6 exit code: 0

@@ -85,5 +85,45 @@ script-slo.js-г 30 VU, 1 минутын нөхцөлөөр ажиллуулав
 - [script.js](script.js) — Алхам 2/3, `vus/duration`, stages **байхгүй**
 - [stages.js](stages.js) — Алхам 3-ын stages цикл (5→30→100→0)
 - [script-slo.js](script-slo.js) — Алхам 4, thresholds
+- [server/server.js](server/server.js) — Алхам 5, локал тест сервер (`/fast`, `/slow`)
+- [local-test.js](local-test.js) — Алхам 5, локал сервер рүү хийх тест
 
 stages болон `vus/duration`-г нэг файлд хольвол stages давамгайлж `vus/duration` үл тоогдоно.
+
+---
+
+## Алхам 5 — Локал сервер тестлэх
+
+Node-ийн built-in `http`-ээр энгийн сервер бичив ([server/server.js](server/server.js)) — `/fast` шууд хариулна, `/slow` 100 ms санаатай саатуулна. Локал сүлжээнд RTT ~0 тул гадаад сайтын хэлбэлзэл оролцохгүй, сервер талын ажлын цэвэр нөлөө харагдана.
+
+```
+node server/server.js
+k6 run -e EP=/fast local-test.js | tee results/run-local-fast.txt
+k6 run -e EP=/slow local-test.js | tee results/run-local-slow.txt
+```
+
+30 VU, 30 секунд, `sleep()` зориудаар байхгүй (серверийн бодит багтаамжийг хэмжихийн тулд).
+
+| Endpoint | avg | **p95** | max | **Throughput** | Error rate | Threshold `p(95)<150` |
+|---|---|---|---|---|---|---|
+| `/fast` | 435 µs | **751 µs** | 55.25 ms | **64 195 req/s** | 0.00% | ✓ PASS |
+| `/slow` (100 ms) | 103.05 ms | **106.17 ms** | 112.20 ms | **290.70 req/s** | 0.00% | ✓ PASS |
+
+Гаралт: [run-local-fast.txt](results/run-local-fast.txt) · [run-local-slow.txt](results/run-local-slow.txt)
+
+**Ялгаа.** 100 ms саатал нэмэхэд p95 141 дахин өсөж, throughput 221 дахин буурсан. Серверийн саатал нэмэгдэхэд latency буурч байна.
+
+**Throughput-ын тааз.** `/slow` дээр 30 VU / 0.10305 s = 291.12 req/s гэж тооцоолсон бөгөөд бодит throughput 290.70 req/s буюу 0.14% зөрүүтэй байв. Энэ нь throughput серверийн 100 ms саатлаар хязгаарлагдаж байгааг харуулна.
+
+**Тогтвортой байдал.** `/slow` дээр max 112.20 ms буюу p95-аас 6 ms л их. Гадаад сайт дээр max 445 ms (p95-аас 200 ms их) байсантай харьцуулахад локал орчинд хэмжилт хэр тогтвортой болохыг харуулж байна.
+
+---
+
+### Нэгдсэн дүгнэлт
+
+VU 5-аас 100 болоход throughput **19.8 дахин өссөн** боловч VU тутмын бүтээмж ердөө **1.1% буурсан** тул систем ханалтанд хүрээгүй. p95 **5.6%**-иар бага өөрчлөгдсөн ч max latency **82%**-иар өссөн нь сүүл хэсгийн доройтлыг харуулсан.
+
+POFOD **0**, харин response jitter гадаад сайт дээр **392 ms**, локал `/slow` дээр **12.7 ms** байв. Локал `/slow` тестэд latency **141 дахин өсөж**, throughput **221 дахин буурсан** нь ханалт үүсэхэд гүйцэтгэл огцом мууддагийг харууллаа.
+
+Baseline-аас тогтоосон **p95 < 350 ms SLO** болон **exit code 99**-ийн threshold шалгалт нь автомат quality gate хэрэгжүүлэх боломжийг баталсан. Туршилтын явцад эвдрэл гараагүй тул **ROCOF, MTBF, MTTR, Availability**-г тооцох хангалттай өгөгдөл бүрдээгүй.
+
